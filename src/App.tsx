@@ -53,7 +53,7 @@ function App() {
   const user = useAppStore((state) => state.user);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/p2p">
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />

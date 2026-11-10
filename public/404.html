@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/p2p/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MY_PARKING - Find & Book Premium Parking</title>
+    <script>
+      // SPA routing fallback for GitHub Pages
+      // Redirect 404 errors to index.html with the original path preserved
+      const path = sessionStorage.redirect || '/';
+      delete sessionStorage.redirect;
+      if (path && path !== location.href) {
+        history.replaceState(null, null, path);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/p2p/src/main.tsx"></script>
+  </body>
+</html>
