@@ -66,17 +66,28 @@ const defaultFilters: SearchFilters = {
   viewMode: 'grid',
 };
 
+// Load vehicles from localStorage
+const loadVehicles = (): Vehicle[] => {
+  try {
+    const stored = localStorage.getItem('mp_vehicles');
+    return stored ? JSON.parse(stored) : demoVehicles;
+  } catch {
+    return demoVehicles;
+  }
+};
+
 export const useAppStore = create<AppState>((set, get) => ({
   // Auth
   isAuthenticated: false,
   user: null,
   isDemo: false,
   login: (user?: User) => {
+    const vehicles = loadVehicles();
     set({
       isAuthenticated: true,
       user: user || demoUser,
       isDemo: !user,
-      vehicles: demoVehicles,
+      vehicles: vehicles,
       bookings: demoBookings,
       notifications: demoNotifications,
       hostSessions: demoHostSessions,
@@ -84,6 +95,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     });
   },
   logout: () => {
+    localStorage.removeItem('mp_vehicles');
     set({
       isAuthenticated: false,
       user: null,
@@ -105,16 +117,28 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   // Vehicles
   vehicles: [],
-  addVehicle: (vehicle) => set((state) => ({ vehicles: [...state.vehicles, vehicle] })),
+  addVehicle: (vehicle) => set((state) => {
+    const updated = [...state.vehicles, vehicle];
+    localStorage.setItem('mp_vehicles', JSON.stringify(updated));
+    return { vehicles: updated };
+  }),
   updateVehicle: (id, updates) =>
-    set((state) => ({
-      vehicles: state.vehicles.map((v) => (v.id === id ? { ...v, ...updates } : v)),
-    })),
-  deleteVehicle: (id) => set((state) => ({ vehicles: state.vehicles.filter((v) => v.id !== id) })),
+    set((state) => {
+      const updated = state.vehicles.map((v) => (v.id === id ? { ...v, ...updates } : v));
+      localStorage.setItem('mp_vehicles', JSON.stringify(updated));
+      return { vehicles: updated };
+    }),
+  deleteVehicle: (id) => set((state) => {
+    const updated = state.vehicles.filter((v) => v.id !== id);
+    localStorage.setItem('mp_vehicles', JSON.stringify(updated));
+    return { vehicles: updated };
+  }),
   setDefaultVehicle: (id) =>
-    set((state) => ({
-      vehicles: state.vehicles.map((v) => ({ ...v, isDefault: v.id === id })),
-    })),
+    set((state) => {
+      const updated = state.vehicles.map((v) => ({ ...v, isDefault: v.id === id }));
+      localStorage.setItem('mp_vehicles', JSON.stringify(updated));
+      return { vehicles: updated };
+    }),
 
   // Parking
   parkingSpaces: demoParkingSpaces,
